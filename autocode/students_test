@@ -2,6 +2,8 @@ package coverage
 
 import (
 	"os"
+	"testing"
+	"time"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -18,3 +20,110 @@ func init() {
 
 // WRITE YOUR CODE BELOW
 
+func TestPeople_Len(t *testing.T) {
+	man1 := Person{firstName: "firstName1", lastName: "lastName1", birthDay: time.Date(2021, 9, 15, 14, 30, 45, 100, time.Local)}
+	man2 := Person{firstName: "firstName2", lastName: "lastName2", birthDay: time.Date(2021, 8, 15, 14, 30, 45, 100, time.Local)}
+	mockPeople := People{man1, man2}
+	expectLength := 2
+
+	length := mockPeople.Len()
+
+	if length != expectLength {
+		t.Errorf("Expected: %d, got %d", expectLength, length)
+	}
+}
+
+func TestPeople_Less(t *testing.T) {
+	man1 := Person{firstName: "firstName1", lastName: "lastName1", birthDay: time.Date(2021, 9, 15, 14, 30, 45, 100, time.Local)}
+	man2 := Person{firstName: "firstName2", lastName: "lastName2", birthDay: time.Date(2021, 8, 15, 14, 30, 45, 100, time.Local)}
+	man3 := Person{firstName: "firstName3", lastName: "lastName3", birthDay: time.Date(2021, 8, 15, 14, 30, 45, 100, time.Local)}
+	man4 := Person{firstName: "firstName3", lastName: "lastName4", birthDay: time.Date(2021, 8, 15, 14, 30, 45, 100, time.Local)}
+	mockPeople := People{man1, man2, man3, man4}
+
+	result1 := mockPeople.Less(0, 1)
+	if !result1 {
+		t.Errorf("Expected: true, got %t,", result1)
+	}
+
+	result2 := mockPeople.Less(1, 2)
+	if !result2 {
+		t.Errorf("Expected: true, got %t,", result2)
+	}
+
+	result3 := mockPeople.Less(2, 3)
+	if !result3 {
+		t.Errorf("Expected: true, got %t,", result2)
+	}
+}
+
+func TestPeople_Swap(t *testing.T) {
+	man1 := Person{firstName: "firstName1", lastName: "lastName1", birthDay: time.Date(2021, 9, 15, 14, 30, 45, 100, time.Local)}
+	man2 := Person{firstName: "firstName2", lastName: "lastName2", birthDay: time.Date(2021, 8, 15, 14, 30, 45, 100, time.Local)}
+	mockPeople := People{man1, man2}
+
+	mockPeople.Swap(0, 1)
+	if mockPeople[0].firstName == "firstName1" {
+		t.Errorf("Expected: %v, got %v,", man2, man1)
+	}
+}
+
+func TestNew(t *testing.T) {
+	matrix1, err1 := New("567567567567567")
+	if err1 != nil {
+		t.Errorf("Expected string without characters, matrix: %v, error: %v", matrix1, err1)
+	}
+
+	matrix2, err2 := New("ho")
+	if err2 == nil {
+		t.Errorf("Expected error and matrix: %v", matrix2)
+	}
+
+	matrix3, err3 := New("117123 2134 68\n567")
+	if err3 == nil {
+		t.Errorf("Expected error: Rows need to be the same length matrix: %v  %v", matrix3, err3)
+	}
+}
+
+func TestMatrix_Rows(t *testing.T) {
+	matrix, _ := New("56756 75675 67567")
+	expected := 1
+
+	result := matrix.Rows()
+	if len(result) != expected {
+		t.Errorf("Expected %v row in the matrix", result)
+	}
+}
+
+func TestMatrix_Cols(t *testing.T) {
+	matrix, _ := New("56756 75675 67567")
+	expected := 3
+
+	result := matrix.Cols()
+	if len(result) != expected {
+		t.Errorf("Expected %v row in the matrix", result)
+	}
+}
+
+func TestMatrix_Set(t *testing.T) {
+	matrix, _ := New("56756 75675 67567")
+	row1 := 0
+	row2 := 2
+	col := 2
+	col2 := 6
+	value := 9
+
+	result1 := matrix.Set(row1, col, value)
+	if !result1 {
+		t.Errorf("Expected  %v < 0 || m.rows <= %v || %v < 0 || m.cols <= %v", row1, row1, col, col)
+	}
+
+	result2 := matrix.Set(row2, col, value)
+	if result2 {
+		t.Errorf("Expected false, row %v < 0 || m.rows <= %v", row2, row2)
+	}
+
+	result3 := matrix.Set(row1, col2, value)
+	if result3 {
+		t.Errorf("Expected false, col %v < 0 || m.cols <= %v", col2, col2)
+	}
+}
